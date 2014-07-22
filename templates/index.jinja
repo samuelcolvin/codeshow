@@ -19,6 +19,12 @@
 <input class="url-input" type="text" name="url"/>
 <p>Or enter the actual url of the raw code:</p>
 <input class="url-input" type="text" name="rawurl"/>
+<p>Font size:</p>
+<p><select name="fontsize">
+{% for size in fontsizes %}
+<option value="{{ size }}">{{ size }}%</option>
+{% endfor %}
+</select></p>
 <p><input type="submit" value="submit"/></p>
 </form>
 <p>See <a href="https://github.com/samuelcolvin/codeshow">github.com/samuelcolvin/codeshow</a> for code.</p>

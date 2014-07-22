@@ -12,18 +12,18 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     url = request.args.get('url', None)
-    print 'url:', url
+    fontsize = request.args.get('fontsize', None)
     if url:
-        return redirect(url_for('found', url = url))
+        return redirect(url_for('found', fontsize = fontsize, url = url))
     rawurl = request.args.get('rawurl', None)
-    print 'rawurl:', rawurl
     if rawurl:
-        return redirect(url_for('show', url = rawurl))
-    return render_template('index.jinja')
+        return redirect(url_for('show', fontsize = fontsize, url = rawurl))
+    fontsizes = [100, 120, 150, 180, 200]
+    return render_template('index.jinja', fontsizes = fontsizes)
 
 
-@app.route("/found/<path:url>")
-def found(url = None):
+@app.route("/found/<fontsize>/<path:url>")
+def found(fontsize = 100, url = None):
     output = 'url: %s\n' % url
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri).strip('/')
@@ -38,11 +38,11 @@ def found(url = None):
             if urlfound.startswith('/'):
                 urlfound = domain + urlfound
             output += 'url: %s\n' % urlfound
-            links.append({'name': urlfound, 'url': '/show/%s' % urlfound})
+            links.append({'name': urlfound, 'url': url_for('show', fontsize = fontsize, url = urlfound)})
     return render_template('find_links.jinja', url = url, links = links) # , output = output
 
-@app.route("/show/<path:url>")
-def show(url = None):
+@app.route("/show/<int:fontsize>/<path:url>")
+def show(fontsize = 100, url = None):
     r = requests.get(url)
     fname = url.split('/')[-1]
     try:
@@ -53,7 +53,7 @@ def show(url = None):
     css = pyg_css.encode('utf8')
     formatter = HtmlFormatter(linenos=True, cssclass='code')#
     code = highlight(r.text, lexer, formatter)
-    return render_template('showcode.jinja', title = fname, code = code, css = css)
+    return render_template('showcode.jinja', title = fname, code = code, css = css, fontsize = fontsize)
 
 if __name__ == "__main__":
     app.run(debug=True)#
