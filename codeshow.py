@@ -51,7 +51,10 @@ def found(fontsize = 100, pystyle = 'default', url = None):
 def show(fontsize = 100, pystyle = 'default', url = None):
     print 'pystyle', pystyle
     r = requests.get(url)
-    fname = url.split('/')[-1]
+    try:
+        fname = url.split('/')[-1]
+    except:
+        fname = 'unknown.txt'
     contype = r.headers.get('content-type', None)
     if contype and ';' in contype:
         contype = contype.split(';')[0]
@@ -62,7 +65,6 @@ def show(fontsize = 100, pystyle = 'default', url = None):
             lexer = pyg_lexers.get_lexer_for_mimetype(contype)
         except:
             lexer = pyg_lexers.get_lexer_for_filename('.txt')
-    # pystyle = pyg_styles.get_style_by_name(pystyle)
     formatter = HtmlFormatter(linenos=True, cssclass='code', style = pystyle)
     css = formatter.get_style_defs('.code').encode('utf8')
     code = highlight(r.text, lexer, formatter)
