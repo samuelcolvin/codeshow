@@ -47,4 +47,4 @@ def hello(url = None):
     return render_template('showcode.jinja', title = fname, code = code, css = css)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()#debug=True
