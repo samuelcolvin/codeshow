@@ -7,23 +7,26 @@ import requests, re
 from flask import request
 from urlparse import urlparse
 from flask import redirect, url_for
+import pygments.styles as pyg_styles
 app = Flask(__name__)
 
 @app.route("/")
 def index():
     url = request.args.get('url', None)
-    fontsize = request.args.get('fontsize', None)
+    fontsize = request.args.get('fontsize', 100)
+    pystyle = request.args.get('pystyle', 'default')
     if url:
-        return redirect(url_for('found', fontsize = fontsize, url = url))
+        return redirect(url_for('found', fontsize = fontsize, pystyle = pystyle, url = url))
     rawurl = request.args.get('rawurl', None)
     if rawurl:
-        return redirect(url_for('show', fontsize = fontsize, url = rawurl))
+        return redirect(url_for('show', fontsize = fontsize, pystyle = pystyle, url = rawurl))
     fontsizes = [100, 120, 150, 180, 200]
-    return render_template('index.jinja', fontsizes = fontsizes)
+    pystyles = pyg_styles.get_all_styles()
+    return render_template('index.jinja', pystyles = pystyles, fontsizes = fontsizes)
 
 
-@app.route("/found/<fontsize>/<path:url>")
-def found(fontsize = 100, url = None):
+@app.route("/found/<int:fontsize>/<pystyle>/<path:url>")
+def found(fontsize = 100, pystyle = 'default', url = None):
     output = 'url: %s\n' % url
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri).strip('/')
@@ -38,11 +41,15 @@ def found(fontsize = 100, url = None):
             if urlfound.startswith('/'):
                 urlfound = domain + urlfound
             output += 'url: %s\n' % urlfound
-            links.append({'name': urlfound, 'url': url_for('show', fontsize = fontsize, url = urlfound)})
+            links.append({'name': urlfound, 'url': url_for('show', 
+                                                        fontsize = fontsize, 
+                                                        pystyle = pystyle,
+                                                        url = urlfound)})
     return render_template('find_links.jinja', url = url, links = links) # , output = output
 
-@app.route("/show/<int:fontsize>/<path:url>")
-def show(fontsize = 100, url = None):
+@app.route("/show/<int:fontsize>/<pystyle>/<path:url>")
+def show(fontsize = 100, pystyle = 'default', url = None):
+    print 'pystyle', pystyle
     r = requests.get(url)
     fname = url.split('/')[-1]
     contype = r.headers.get('content-type', None)
@@ -55,11 +62,11 @@ def show(fontsize = 100, url = None):
             lexer = pyg_lexers.get_lexer_for_mimetype(contype)
         except:
             lexer = pyg_lexers.get_lexer_for_filename('.txt')
-    pyg_css = HtmlFormatter().get_style_defs('.code')
-    css = pyg_css.encode('utf8')
-    formatter = HtmlFormatter(linenos=True, cssclass='code')#
+    # pystyle = pyg_styles.get_style_by_name(pystyle)
+    formatter = HtmlFormatter(linenos=True, cssclass='code', style = pystyle)
+    css = formatter.get_style_defs('.code').encode('utf8')
     code = highlight(r.text, lexer, formatter)
     return render_template('showcode.jinja', title = fname, code = code, css = css, fontsize = fontsize)
 
 if __name__ == "__main__":
-    app.run()#debug=True
+    app.run(debug=True)#
