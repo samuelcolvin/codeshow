@@ -45,10 +45,16 @@ def found(fontsize = 100, url = None):
 def show(fontsize = 100, url = None):
     r = requests.get(url)
     fname = url.split('/')[-1]
+    contype = r.headers.get('content-type', None)
+    if contype and ';' in contype:
+        contype = contype.split(';')[0]
     try:
         lexer = pyg_lexers.get_lexer_for_filename(fname)
     except:
-        lexer = pyg_lexers.get_lexer_for_filename('.txt')
+        try:
+            lexer = pyg_lexers.get_lexer_for_mimetype(contype)
+        except:
+            lexer = pyg_lexers.get_lexer_for_filename('.txt')
     pyg_css = HtmlFormatter().get_style_defs('.code')
     css = pyg_css.encode('utf8')
     formatter = HtmlFormatter(linenos=True, cssclass='code')#
@@ -56,4 +62,4 @@ def show(fontsize = 100, url = None):
     return render_template('showcode.jinja', title = fname, code = code, css = css, fontsize = fontsize)
 
 if __name__ == "__main__":
-    app.run(debug=True)#
+    app.run()#debug=True
