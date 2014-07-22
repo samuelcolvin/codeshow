@@ -1,0 +1,23 @@
+{% extends "base.jinja" %}
+{% block css %}
+    <style>
+    {{ css|safe }}
+    body {
+      margin: 0px;
+    }
+
+    .linenodiv {
+      border-right: 1px solid #ddd;
+      padding-right: 3px;
+    }
+
+    .codetable {
+      position: absolute;
+      top: -16px;
+    }
+    </style>
+{% endblock %}
+
+{% block main %}
+{{ code|safe }}
+{% endblock %}

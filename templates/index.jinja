@@ -1,0 +1,21 @@
+{% extends "base.jinja" %}
+
+{% block css %}
+    <style>
+      .url-input {
+        width: 400px;
+      }
+
+      p {
+        margin: 0px;
+      }
+    </style>
+{% endblock %}
+
+{% block main %}
+<h3>Displays raw code from gists correctly highlighted.</h3>
+<form method="get">
+<p>Enter Gist url:</p>
+<input class="url-input" type="text" name="url"/>
+<p><input type="submit" value="submit"/></p>
+{% endblock %}

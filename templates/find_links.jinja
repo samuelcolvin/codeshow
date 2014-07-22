@@ -1,0 +1,11 @@
+{% extends "base.jinja" %}
+
+{% block main %}
+<p>Look for raw code files at <a href="{{ url }}">{{ url }}</a></p>
+{% for link in links %}
+<p>View: <a href="{{ link.url }}">{{ link.name }}</a></p>
+{% endfor %}
+<pre>
+{{ output }}
+</pre>
+{% endblock %}
