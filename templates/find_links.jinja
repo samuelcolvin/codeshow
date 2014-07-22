@@ -1,10 +1,13 @@
 {% extends "base.jinja" %}
 
 {% block main %}
-<p>Look for raw code files at <a href="{{ url }}">{{ url }}</a></p>
+<p>Links found in <code>{{ url }}</code>:</p>
+<ul>
 {% for link in links %}
-<p>View: <a href="{{ link.url }}">{{ link.name }}</a></p>
+<li><a href="{{ link.url }}">{{ link.name }}</a></li>
 {% endfor %}
+</ul>
+<p>Only links containing <code>"/raw/"</code> are shown.</p>
 <pre>
 {{ output }}
 </pre>

@@ -15,8 +15,10 @@
 {% block main %}
 <h3>Displays raw code from gists correctly highlighted.</h3>
 <form method="get">
-<p>Enter Gist url:</p>
+<p>Enter Gist url (or url of any page containing links to raw code files):</p>
 <input class="url-input" type="text" name="url"/>
+<p>Or enter the actual url of the raw code:</p>
+<input class="url-input" type="text" name="rawurl"/>
 <p><input type="submit" value="submit"/></p>
 </form>
 <p>See <a href="https://github.com/samuelcolvin/codeshow">github.com/samuelcolvin/codeshow</a> for code.</p>
